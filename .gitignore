@@ -216,3 +216,100 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ==========================
+# Python
+# ==========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# ==========================
+# Virtual Environment
+# ==========================
+.venv/
+venv/
+env/
+
+# ==========================
+# Environment Variables
+# ==========================
+.env
+backend/.env
+
+# ==========================
+# IDE
+# ==========================
+.vscode/
+.idea/
+
+# ==========================
+# Jupyter
+# ==========================
+.ipynb_checkpoints/
+
+# ==========================
+# Logs
+# ==========================
+logs/
+*.log
+
+# ==========================
+# OS Files
+# ==========================
+.DS_Store
+Thumbs.db
+
+# ==========================
+# Python Cache
+# ==========================
+.pytest_cache/
+.mypy_cache/
+.cache/
+
+# ==========================
+# Build
+# ==========================
+build/
+dist/
+*.egg-info/
+
+# ==========================
+# Data
+# ==========================
+
+# Ignore downloaded datasets
+data/raw/
+
+# Ignore processed datasets
+data/processed/
+
+# Keep folder structure
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/external/.gitkeep
+!data/metadata/.gitkeep
+
+# ==========================
+# ChromaDB (Future RAG)
+# ==========================
+chroma_db/
+
+# ==========================
+# ML Models
+# ==========================
+models/
+*.pkl
+*.joblib
+*.onnx
+
+# ==========================
+# TensorBoard
+# ==========================
+runs/
+
+# ==========================
+# Docker
+# ==========================
+docker-compose.override.yml
