@@ -66,6 +66,11 @@ def generate_orders(df):
                 "ship_date",
                 "ship_mode",
                 "customer_id",
+                "country",
+                "state",
+                "city",
+                "region",
+                "market",
             ]
         ]
         .drop_duplicates()

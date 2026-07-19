@@ -302,3 +302,17 @@ This project demonstrates practical knowledge of:
 | Version | Date | Description |
 |----------|------|-------------|
 | v0.1 | 2026-07-14 | Project initialization completed |
+
+## Dataset Setup
+
+The project does not store raw datasets in Git.
+
+To download the dataset:
+
+1. Configure the Kaggle API.
+2. Run the dataset download script.
+3. Extract the dataset into:
+
+data/raw/global_superstore/
+
+The ETL pipeline will generate processed datasets automatically.

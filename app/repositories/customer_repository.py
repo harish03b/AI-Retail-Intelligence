@@ -4,20 +4,18 @@ from app.models.customer import Customer
 
 
 class CustomerRepository:
+    def __init__(self, db: Session):
+        self.db = db
 
-    @staticmethod
-    def get_all_customers(db: Session):
-
-        return db.query(Customer).all()
-
-    @staticmethod
-    def get_customer_by_id(
-        db: Session,
-        customer_id: int,
-    ):
-
+    def get_by_customer_id(self, customer_id: str):
         return (
-            db.query(Customer)
+            self.db.query(Customer)
             .filter(Customer.customer_id == customer_id)
             .first()
         )
+
+    def create(self, customer: Customer):
+        self.db.add(customer)
+        self.db.commit()
+        self.db.refresh(customer)
+        return customer
