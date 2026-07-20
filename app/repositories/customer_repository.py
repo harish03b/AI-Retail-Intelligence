@@ -13,6 +13,12 @@ class CustomerRepository:
             .filter(Customer.customer_id == customer_id)
             .first()
         )
+    def get_all(self):
+        return (
+        self.db.query(Customer)
+        .order_by(Customer.customer_key)
+        .all()
+    )
 
     def create(self, customer: Customer):
         self.db.add(customer)
