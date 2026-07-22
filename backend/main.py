@@ -1,6 +1,9 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from fastapi.staticfiles import StaticFiles
+from backend.rag.document_manager import list_documents
 from app.api.router import api_router
 
 app = FastAPI(
@@ -14,9 +17,10 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# -----------------------------
+# -------------------------------------------------
 # CORS Configuration
-# -----------------------------
+# -------------------------------------------------
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -27,9 +31,36 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Register all API routes
+# -------------------------------------------------
+# Register API Routes
+# -------------------------------------------------
+
 app.include_router(api_router)
 
+# -------------------------------------------------
+# Serve PDF Documents
+# URL:
+# http://127.0.0.1:8000/documents/<filename>
+# -------------------------------------------------
+
+documents_directory = Path(__file__).parent / "documents"
+
+app.mount(
+    "/documents",
+    StaticFiles(directory=documents_directory),
+    name="documents",
+)
+
+# -------------------------------------------------
+# Root Endpoint
+# -------------------------------------------------
+@app.get(
+    "/documents",
+    tags=["Documents"],
+    summary="List Available Documents",
+)
+def get_documents():
+    return list_documents()
 
 @app.get(
     "/",

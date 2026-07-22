@@ -18,3 +18,11 @@ export interface ChatMessage {
   content: string;
   sources?: string[];
 }
+
+export interface ChatConversation {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  messages: ChatMessage[];
+}
