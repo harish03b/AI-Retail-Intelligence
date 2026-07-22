@@ -1,10 +1,23 @@
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from backend.rag.document_manager import list_documents
+
 from app.api.router import api_router
+
+from backend.rag.document_manager import (
+    list_documents,
+    upload_document,
+)
+
+from backend.rag.vector_store import (
+    add_document_to_vector_store,
+)
+
+from backend.rag.retriever import (
+    refresh_vector_store,
+)
 
 app = FastAPI(
     title="Enterprise Retail Decision Intelligence Platform API",
@@ -17,9 +30,9 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# -------------------------------------------------
+# ==========================================================
 # CORS Configuration
-# -------------------------------------------------
+# ==========================================================
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,29 +44,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# -------------------------------------------------
+# ==========================================================
 # Register API Routes
-# -------------------------------------------------
+# ==========================================================
 
 app.include_router(api_router)
 
-# -------------------------------------------------
-# Serve PDF Documents
-# URL:
-# http://127.0.0.1:8000/documents/<filename>
-# -------------------------------------------------
+# ==========================================================
+# Static PDF Files
+# ==========================================================
 
 documents_directory = Path(__file__).parent / "documents"
 
 app.mount(
-    "/documents",
-    StaticFiles(directory=documents_directory),
-    name="documents",
+    "/files",
+    StaticFiles(
+        directory=documents_directory,
+    ),
+    name="files",
 )
 
-# -------------------------------------------------
-# Root Endpoint
-# -------------------------------------------------
+# ==========================================================
+# Document APIs
+# ==========================================================
+
 @app.get(
     "/documents",
     tags=["Documents"],
@@ -61,6 +75,42 @@ app.mount(
 )
 def get_documents():
     return list_documents()
+
+
+@app.post(
+    "/documents/upload",
+    tags=["Documents"],
+    summary="Upload PDF Document",
+)
+async def upload_pdf(
+    file: UploadFile = File(...),
+):
+    """
+    Upload a PDF and immediately
+    index it into the FAISS vector store.
+    """
+
+    # Save uploaded file
+    file_path = await upload_document(file)
+
+    # Add only this document
+    # to the existing FAISS index
+    add_document_to_vector_store(
+        file_path,
+    )
+
+    # Refresh cached retriever
+    refresh_vector_store()
+
+    return {
+        "message": "Document uploaded and indexed successfully.",
+        "filename": file.filename,
+    }
+
+
+# ==========================================================
+# Root Endpoint
+# ==========================================================
 
 @app.get(
     "/",

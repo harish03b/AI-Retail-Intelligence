@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import List
 
+from fastapi import HTTPException, UploadFile
 
 DOCUMENTS_DIR = Path(__file__).resolve().parent.parent / "documents"
 
@@ -20,11 +21,12 @@ def format_file_size(size: int) -> str:
 
         value /= 1024
 
+    return f"{size} B"
+
 
 def list_documents() -> List[dict]:
     """
-    Returns metadata for all PDF documents
-    stored in backend/documents.
+    Returns metadata for all PDF documents.
     """
 
     documents = []
@@ -45,3 +47,32 @@ def list_documents() -> List[dict]:
         )
 
     return documents
+
+
+async def upload_document(file: UploadFile) -> Path:
+    """
+    Save uploaded PDF into backend/documents.
+
+    Returns
+    -------
+    Path
+        Saved PDF path.
+    """
+
+    if file.content_type != "application/pdf":
+        raise HTTPException(
+            status_code=400,
+            detail="Only PDF files are allowed.",
+        )
+
+    DOCUMENTS_DIR.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    file_path = DOCUMENTS_DIR / file.filename
+
+    with open(file_path, "wb") as buffer:
+        buffer.write(await file.read())
+
+    return file_path

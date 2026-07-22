@@ -237,7 +237,7 @@ export default function DocumentsPage() {
                       }
                       onClick={() =>
                         window.open(
-                          `${import.meta.env.VITE_API_BASE_URL}/documents/${encodeURIComponent(
+                          `${import.meta.env.VITE_API_BASE_URL}/files/${encodeURIComponent(
                             document.filename
                           )}`,
                           "_blank"
@@ -253,7 +253,7 @@ export default function DocumentsPage() {
                         <DownloadRoundedIcon />
                       }
                       component="a"
-                      href={`${import.meta.env.VITE_API_BASE_URL}/documents/${encodeURIComponent(
+                      href={`${import.meta.env.VITE_API_BASE_URL}/files/${encodeURIComponent(
                         document.filename
                       )}`}
                       download

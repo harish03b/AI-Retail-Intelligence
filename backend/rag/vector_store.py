@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pathlib import Path
 
 from langchain_community.vectorstores import FAISS
 
@@ -8,22 +9,36 @@ from backend.rag.config import (
 )
 
 from backend.rag.embeddings import get_embedding_model
-from backend.rag.splitter import split_documents
+from backend.rag.splitter import (
+    split_document,
+    split_documents,
+)
+
+
+def get_vector_store_path() -> Path:
+    """
+    Returns the FAISS save location.
+    """
+
+    VECTOR_STORE_DIR.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    return VECTOR_STORE_DIR / FAISS_INDEX_NAME
 
 
 def create_vector_store() -> FAISS:
     """
-    Create a FAISS vector store from document chunks
-    and save it locally.
+    Create a brand-new FAISS vector store
+    using every PDF inside backend/documents.
     """
 
-    print("Loading and splitting documents...")
+    print("Loading documents...")
 
     chunks = split_documents()
 
     print(f"Loaded {len(chunks)} chunks.")
-
-    print("Loading embedding model...")
 
     embeddings = get_embedding_model()
 
@@ -34,19 +49,11 @@ def create_vector_store() -> FAISS:
         embedding=embeddings,
     )
 
-    VECTOR_STORE_DIR.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
-
-    save_path = VECTOR_STORE_DIR / FAISS_INDEX_NAME
-
     vector_store.save_local(
-        str(save_path)
+        str(get_vector_store_path())
     )
 
-    print("\n✅ Vector store saved successfully!")
-    print(f"Location: {save_path}")
+    print("✅ Vector Store Created")
 
     return vector_store
 
@@ -55,23 +62,50 @@ def create_vector_store() -> FAISS:
 def load_vector_store() -> FAISS:
     """
     Load the existing FAISS vector store.
-
-    This function is cached so the index is loaded
-    only once during application lifetime.
     """
-
-    print("Loading FAISS vector store...")
 
     embeddings = get_embedding_model()
 
-    save_path = VECTOR_STORE_DIR / FAISS_INDEX_NAME
-
     return FAISS.load_local(
-        str(save_path),
+        str(get_vector_store_path()),
         embeddings,
         allow_dangerous_deserialization=True,
     )
 
 
+def add_document_to_vector_store(
+    file_path: Path,
+) -> None:
+    """
+    Add a newly uploaded PDF to the
+    existing FAISS vector store.
+    """
+
+    print(f"Indexing {file_path.name}...")
+
+    chunks = split_document(file_path)
+
+    if not chunks:
+        print("No chunks generated.")
+        return
+
+    vector_store = load_vector_store()
+
+    vector_store.add_documents(
+        chunks,
+    )
+
+    vector_store.save_local(
+        str(get_vector_store_path())
+    )
+
+    # Clear cache so future requests
+    # load the updated index.
+    load_vector_store.cache_clear()
+
+    print("✅ FAISS Updated")
+
+
 if __name__ == "__main__":
+
     create_vector_store()
