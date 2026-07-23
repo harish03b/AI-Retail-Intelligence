@@ -76,3 +76,29 @@ async def upload_document(file: UploadFile) -> Path:
         buffer.write(await file.read())
 
     return file_path
+
+
+def delete_document(filename: str) -> Path:
+    """
+    Delete a PDF document.
+
+    Returns
+    -------
+    Path
+        Deleted file path.
+    """
+
+    # Prevent path traversal attacks
+    filename = Path(filename).name
+
+    file_path = DOCUMENTS_DIR / filename
+
+    if not file_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="Document not found.",
+        )
+
+    file_path.unlink()
+
+    return file_path

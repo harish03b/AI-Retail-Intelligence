@@ -7,16 +7,18 @@ from fastapi.staticfiles import StaticFiles
 from app.api.router import api_router
 
 from backend.rag.document_manager import (
+    delete_document,
     list_documents,
     upload_document,
 )
 
-from backend.rag.vector_store import (
-    add_document_to_vector_store,
-)
-
 from backend.rag.retriever import (
     refresh_vector_store,
+)
+
+from backend.rag.vector_store import (
+    add_document_to_vector_store,
+    create_vector_store,
 )
 
 app = FastAPI(
@@ -51,7 +53,7 @@ app.add_middleware(
 app.include_router(api_router)
 
 # ==========================================================
-# Static PDF Files
+# Static Documents
 # ==========================================================
 
 documents_directory = Path(__file__).parent / "documents"
@@ -74,6 +76,10 @@ app.mount(
     summary="List Available Documents",
 )
 def get_documents():
+    """
+    Return all uploaded PDF documents.
+    """
+
     return list_documents()
 
 
@@ -93,18 +99,48 @@ async def upload_pdf(
     # Save uploaded file
     file_path = await upload_document(file)
 
-    # Add only this document
-    # to the existing FAISS index
+    # Incrementally index only this PDF
     add_document_to_vector_store(
         file_path,
     )
 
-    # Refresh cached retriever
+    # Refresh retriever cache
     refresh_vector_store()
 
     return {
         "message": "Document uploaded and indexed successfully.",
         "filename": file.filename,
+    }
+
+
+@app.delete(
+    "/documents/{filename}",
+    tags=["Documents"],
+    summary="Delete PDF Document",
+)
+def delete_pdf(
+    filename: str,
+):
+    """
+    Delete a PDF document and rebuild
+    the FAISS vector store.
+    """
+
+    deleted_file = delete_document(
+        filename,
+    )
+
+    print("Rebuilding FAISS index...")
+
+    create_vector_store()
+
+    refresh_vector_store()
+
+    print("FAISS rebuild completed.")
+
+    return {
+        "message": "Document deleted and vector store rebuilt successfully.",
+        "filename": deleted_file.name,
     }
 
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   Box,
@@ -11,6 +11,13 @@ import {
   Stack,
   TextField,
   Typography,
+    Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+    Alert,
+  Snackbar,
 } from "@mui/material";
 
 import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
@@ -27,8 +34,22 @@ export default function DocumentsPage() {
   const [filteredDocuments, setFilteredDocuments] = useState<Document[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+const [uploading, setUploading] = useState(false);
+const [deleting, setDeleting] = useState<string | null>(null);
+const fileInputRef = useRef<HTMLInputElement>(null);
+const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  useEffect(() => {
+const [selectedDocument, setSelectedDocument] =
+  useState<Document | null>(null); 
+  const [snackbarOpen, setSnackbarOpen] =
+  useState(false);
+
+const [snackbarMessage, setSnackbarMessage] =
+  useState("");
+
+const [snackbarSeverity, setSnackbarSeverity] =
+  useState<"success" | "error">("success");
+useEffect(() => {
     loadDocuments();
   }, []);
 
@@ -56,6 +77,95 @@ export default function DocumentsPage() {
       setLoading(false);
     }
   }
+
+  async function handleUpload(
+  event: React.ChangeEvent<HTMLInputElement>
+) {
+  const file = event.target.files?.[0];
+
+  if (!file) {
+    return;
+  }
+
+  try {
+    setUploading(true);
+
+    await documentService.uploadDocument(file);
+
+    await loadDocuments();
+
+setSnackbarSeverity("success");
+setSnackbarMessage(
+  "Document uploaded successfully."
+);
+setSnackbarOpen(true);
+
+  } catch (error) {
+    console.error(
+      "Failed to upload document:",
+      error
+    );
+setSnackbarSeverity("error");
+setSnackbarMessage(
+  "Failed to upload document. Please try again."
+);
+setSnackbarOpen(true);
+  } finally {
+    setUploading(false);
+
+    event.target.value = "";
+  }
+}
+
+async function handleDelete(filename: string) {
+  try {
+    setDeleting(filename);
+
+    await documentService.deleteDocument(filename);
+
+    await loadDocuments();
+setSnackbarSeverity("success");
+setSnackbarMessage(
+  "Document deleted successfully."
+);
+setSnackbarOpen(true);
+  } catch (error) {
+    console.error("Failed to delete document:", error);
+setSnackbarSeverity("error");
+setSnackbarMessage(
+  "Failed to delete document. Please try again."
+);
+setSnackbarOpen(true);
+  }
+  finally {
+    setDeleting(null);
+  }
+}
+
+
+function openDeleteDialog(document: Document) {
+  setSelectedDocument(document);
+  setDeleteDialogOpen(true);
+}
+
+function closeDeleteDialog() {
+  setDeleteDialogOpen(false);
+  setSelectedDocument(null);
+}
+
+async function confirmDelete() {
+  if (!selectedDocument) {
+    return;
+  }
+
+  await handleDelete(selectedDocument.filename);
+
+  closeDeleteDialog();
+}
+
+function closeSnackbar() {
+  setSnackbarOpen(false);
+}
 
   if (loading) {
     return (
@@ -113,22 +223,35 @@ export default function DocumentsPage() {
             </Typography>
           </Box>
 
-          <Button
-            variant="contained"
-            startIcon={<UploadFileRoundedIcon />}
-            disabled
-            sx={{
-              borderRadius: 3,
-              px: 3,
-              py: 1.2,
-              textTransform: "none",
-              fontWeight: 700,
-              background:
-                "linear-gradient(135deg,#6C63FF,#8E7BFF)",
-            }}
-          >
-            Upload Document
-          </Button>
+          <>
+  <input
+    ref={fileInputRef}
+    hidden
+    type="file"
+    accept=".pdf"
+    onChange={handleUpload}
+  />
+
+  <Button
+    variant="contained"
+    startIcon={<UploadFileRoundedIcon />}
+    onClick={() => fileInputRef.current?.click()}
+    disabled={uploading}
+    sx={{
+      borderRadius: 3,
+      px: 3,
+      py: 1.2,
+      textTransform: "none",
+      fontWeight: 700,
+      background:
+        "linear-gradient(135deg,#6C63FF,#8E7BFF)",
+    }}
+  >
+    {uploading
+      ? "Uploading..."
+      : "Upload Document"}
+  </Button>
+</>
         </Stack>
 
         <TextField
@@ -262,15 +385,75 @@ export default function DocumentsPage() {
                     </Button>
 
                     <Button
-                      color="error"
-                      variant="outlined"
-                      startIcon={
-                        <DeleteOutlineRoundedIcon />
-                      }
-                      disabled
-                    >
-                      Delete
-                    </Button>
+  color="error"
+  variant="outlined"
+  startIcon={<DeleteOutlineRoundedIcon />}
+  onClick={() => openDeleteDialog(document)}
+  disabled={deleting === document.filename}
+>
+  {deleting === document.filename
+    ? "Deleting..."
+    : "Delete"}
+</Button><Dialog
+  open={deleteDialogOpen}
+  onClose={closeDeleteDialog}
+>
+  <DialogTitle>
+    Delete Document
+  </DialogTitle>
+
+  <DialogContent>
+    <DialogContentText>
+      Are you sure you want to delete
+      <strong>
+        {" "}
+        {selectedDocument?.filename}
+      </strong>
+      ?
+      <br />
+      <br />
+      This action cannot be undone and the
+      document will also be removed from the
+      AI knowledge base.
+    </DialogContentText>
+  </DialogContent>
+
+  <DialogActions>
+    <Button
+      onClick={closeDeleteDialog}
+      variant="outlined"
+    >
+      Cancel
+    </Button>
+
+    <Button
+      color="error"
+      variant="contained"
+      onClick={confirmDelete}
+      disabled={deleting !== null}
+    >
+      {deleting ? "Deleting..." : "Delete"}
+    </Button>
+  </DialogActions>
+</Dialog>
+<Snackbar
+  open={snackbarOpen}
+  autoHideDuration={4000}
+  onClose={closeSnackbar}
+  anchorOrigin={{
+    vertical: "bottom",
+    horizontal: "right",
+  }}
+>
+  <Alert
+    onClose={closeSnackbar}
+    severity={snackbarSeverity}
+    variant="filled"
+    sx={{ width: "100%" }}
+  >
+    {snackbarMessage}
+  </Alert>
+</Snackbar>
                   </Stack>
                 </CardContent>
               </Card>
