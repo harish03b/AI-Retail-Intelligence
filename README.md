@@ -1,318 +1,373 @@
-# AI-Retail-Intelligence
-# 🛒 AI Retail Intelligence Platform
+# 🛒 Enterprise Retail Decision Intelligence Platform
 
-> Enterprise Decision Intelligence Platform using Data Science, Machine Learning, RAG, Generative AI, and AI Agents.
+> AI-powered Retail Analytics Platform combining Data Engineering, Business Intelligence, and Retrieval-Augmented Generation (RAG) to support enterprise decision-making.
 
 ---
 
 # Project Overview
 
-The AI Retail Intelligence Platform is an enterprise-grade application designed to help retail businesses make intelligent decisions using data analytics, machine learning, and Generative AI.
+The Enterprise Retail Decision Intelligence Platform is a full-stack AI application designed to help retail organizations analyze business performance and interact with enterprise knowledge using natural language.
 
-The platform integrates predictive analytics with Retrieval-Augmented Generation (RAG) to provide actionable insights for inventory management, sales forecasting, customer analytics, and business decision-making.
+The platform integrates structured retail analytics with an AI-powered document assistant, enabling users to explore business data through dashboards while querying company documents using Retrieval-Augmented Generation (RAG).
 
-Unlike traditional dashboards, this platform enables users to interact with business data using natural language and receive AI-powered explanations backed by company documents and historical data.
-
----
-
-# Project Objectives
-
-- Build a complete Data Science pipeline
-- Perform data cleaning and feature engineering
-- Develop predictive machine learning models
-- Build recommendation systems
-- Integrate RAG for document-based question answering
-- Develop AI Agents for business workflows
-- Deploy production-ready APIs
-- Create interactive dashboards
-- Containerize and deploy the application
+The project demonstrates the integration of Data Engineering, Backend Development, Frontend Development, and Generative AI within a single enterprise application.
 
 ---
 
 # Business Problem
 
-Retail businesses often struggle with:
+Retail organizations generate large volumes of transactional and operational data while maintaining important business documents such as policies, manuals, supplier information, and operational guidelines.
 
-- Stock shortages
-- Overstocking
-- Inaccurate demand forecasting
-- Scattered business knowledge
-- Manual report generation
-- Lack of explainable business insights
+Common challenges include:
 
-This platform aims to solve these problems using AI-driven decision support.
+- Difficulty understanding sales trends
+- Limited visibility into customer and product performance
+- Scattered business documentation
+- Manual information retrieval
+- Lack of AI-assisted decision support
 
----
-
-# Target Users
-
-- Store Managers
-- Business Analysts
-- Data Scientists
-- Operations Managers
-- Administrators
+This platform addresses these challenges by combining analytics dashboards with an AI assistant capable of answering questions using enterprise documents.
 
 ---
 
 # Key Features
 
-### Data Analytics
+## Business Analytics
 
-- Sales Analysis
-- Customer Analytics
-- Product Analytics
-- Inventory Analytics
+- Executive Dashboard
+- Sales Performance Analysis
+- Monthly Sales Trends
+- Category Performance
+- Store Performance
+- Top Products
+- Top Customers
 
-### Machine Learning
+---
 
-- Demand Forecasting
-- Customer Segmentation
-- Product Recommendation
-- Inventory Optimization
+## AI Document Assistant
 
-### Generative AI
+- Enterprise RAG Chatbot
+- Natural Language Question Answering
+- Source Citation
+- Context-Aware Responses
 
-- Business Assistant
-- AI Report Generator
-- Natural Language Analytics
+---
 
-### RAG
+## Document Management
 
-- Product Manual Search
-- Company Policy Search
-- Inventory Guidelines
-- Supplier Documentation
+- Upload PDF Documents
+- View Documents
+- Download Documents
+- Delete Documents
+- Dynamic Knowledge Base Updates
+- Automatic Vector Index Refresh
+- No Server Restart Required
 
-### AI Agents
+---
 
-- Forecast Agent
-- Inventory Agent
-- Recommendation Agent
-- Reporting Agent
-- RAG Agent
+## Data Engineering
+
+- ETL Pipeline
+- Data Cleaning
+- Data Normalization
+- Dimension Table Loading
+- Fact Table Loading
+- Incremental Data Processing
 
 ---
 
 # Technology Stack
 
-## Programming
+## Frontend
 
-- Python
-- SQL
-- JavaScript
+- React
 - TypeScript
+- Material UI
+- Axios
+- React Query
+
+---
 
 ## Backend
 
 - FastAPI
+- Python
 
-## Frontend
-
-- React
-- Tailwind CSS
+---
 
 ## Database
 
 - MySQL
 
-## Data Science
+---
 
-- Pandas
-- NumPy
-- Scikit-learn
-- XGBoost
-- LightGBM
-- Prophet
-- TensorFlow (Optional)
-
-## GenAI
+## AI / Generative AI
 
 - LangChain
-- LangGraph
-- OpenAI / Gemini API
-- ChromaDB
-- Sentence Transformers
+- FAISS Vector Store
+- HuggingFace Embeddings
+- Retrieval-Augmented Generation (RAG)
 
-## Visualization
+---
 
-- Plotly
-- Power BI
+## Data Processing
 
-## Deployment
+- Pandas
+- SQLAlchemy
 
-- Docker
-- AWS
+---
+
+## Development Tools
+
+- Git
+- GitHub
+- Postman
+- Swagger UI
 
 ---
 
 # System Architecture
 
 ```text
-Users
-   │
-   ▼
-React Dashboard
-   │
-FastAPI Backend
-   │
- ┌─────────────┬───────────────┐
- │             │               │
- ▼             ▼               ▼
-MySQL      ML Models      RAG Pipeline
- │             │               │
- ▼             ▼               ▼
-Sales      Forecasting     Vector Database
-Inventory  Recommendation  PDFs
-Customers  Segmentation    Policies
+                     Users
+                       │
+                       ▼
+               React Dashboard
+                       │
+                FastAPI Backend
+                       │
+        ┌──────────────┴──────────────┐
+        │                             │
+        ▼                             ▼
+   Retail Analytics             AI Assistant
+        │                             │
+        ▼                             ▼
+ MySQL Data Warehouse         RAG Pipeline
+        │                             │
+        ▼                             ▼
+ ETL Pipeline              Enterprise Documents
 ```
 
 ---
 
-# Development Roadmap
+# AI Document Workflow
 
-## Phase 1
+## Upload Document
 
-- [x] Project Initialization
-- [x] GitHub Repository
-- [x] Virtual Environment
-- [x] Project Structure
-
-## Phase 2
-
-- [ ] Project Architecture
-- [ ] Dataset Selection
-- [ ] Database Design
-- [ ] ER Diagram
-
-## Phase 3
-
-- [ ] Data Engineering
-- [ ] ETL Pipeline
-- [ ] Data Validation
-
-## Phase 4
-
-- [ ] Exploratory Data Analysis
-- [ ] Statistical Analysis
-
-## Phase 5
-
-- [ ] Feature Engineering
-- [ ] Data Transformation
-
-## Phase 6
-
-- [ ] Machine Learning
-- [ ] Forecasting
-- [ ] Customer Segmentation
-- [ ] Recommendation System
-
-## Phase 7
-
-- [ ] Explainable AI
-- [ ] SHAP
-- [ ] LIME
-
-## Phase 8
-
-- [ ] FastAPI Backend
-
-## Phase 9
-
-- [ ] React Dashboard
-
-## Phase 10
-
-- [ ] RAG Pipeline
-
-## Phase 11
-
-- [ ] AI Agents
-
-## Phase 12
-
-- [ ] Docker
-
-## Phase 13
-
-- [ ] AWS Deployment
-
-## Phase 14
-
-- [ ] CI/CD
+```text
+Upload PDF
+      │
+      ▼
+Store Document
+      │
+      ▼
+Split into Chunks
+      │
+      ▼
+Generate Embeddings
+      │
+      ▼
+Update FAISS Index
+      │
+      ▼
+Refresh Retriever
+      │
+      ▼
+Available to AI Assistant
+```
 
 ---
 
-# Repository Structure
+## Delete Document
 
+```text
+Delete PDF
+      │
+      ▼
+Remove Document
+      │
+      ▼
+Rebuild Vector Index
+      │
+      ▼
+Refresh Retriever
+      │
+      ▼
+Removed from AI Knowledge Base
 ```
+
+---
+
+# Application Modules
+
+- Dashboard
+- Products
+- Customers
+- Analytics
+- Documents
+- Enterprise AI Assistant
+
+---
+
+# Project Structure
+
+```text
 AI-Retail-Intelligence/
 
 backend/
+│
+├── app/
+├── rag/
+├── documents/
+│
 frontend/
+│
+├── src/
+│
+database/
+│
+├── schema/
+│
 data/
-docs/
-notebooks/
+scripts/
 tests/
-requirements.txt
+docs/
 README.md
+requirements.txt
 ```
 
 ---
 
-# Current Progress
+# Implemented Features
 
-| Step | Status |
-|------|--------|
-| Repository Created | ✅ |
-| Git Configured | ✅ |
-| Project Structure | ✅ |
-| Virtual Environment | ✅ |
-| Architecture Design | ⏳ |
-| Dataset Collection | ⏳ |
-| Database Design | ⏳ |
+| Module | Status |
+|----------|--------|
+| Data Warehouse | ✅ |
+| ETL Pipeline | ✅ |
+| Dashboard APIs | ✅ |
+| Dashboard UI | ✅ |
+| Retail Analytics | ✅ |
+| AI Assistant | ✅ |
+| RAG Pipeline | ✅ |
+| Document Upload | ✅ |
+| Document Delete | ✅ |
+| Dynamic Vector Indexing | ✅ |
+| PDF Viewer | ✅ |
+| PDF Download | ✅ |
+| Search Documents | ✅ |
+| Confirmation Dialog | ✅ |
+| Snackbar Notifications | ✅ |
 
 ---
 
-# Learning Goals
+# Screenshots
 
-This project demonstrates practical knowledge of:
+Add screenshots of:
 
-- Data Science
+
+- Dashboard
+- Analytics
+- Documents Module
+- AI Assistant
+- Upload Document
+- AI Response
+- Document Management
+
+---
+
+# Installation
+
+## Clone Repository
+
+```bash
+git clone https://github.com/<username>/AI-Retail-Intelligence.git
+```
+
+---
+
+## Backend
+
+```bash
+cd backend
+
+python -m venv .venv
+
+pip install -r requirements.txt
+
+uvicorn app.main:app --reload
+```
+
+---
+
+## Frontend
+
+```bash
+cd frontend
+
+npm install
+
+npm run dev
+```
+
+---
+
+# Environment Variables
+
+Create a `.env` file for the backend.
+
+```text
+DATABASE_URL=<your_database_connection>
+
+LLM_API_KEY=<your_api_key>
+```
+
+> **Note:** Never commit API keys, passwords, or confidential configuration files to GitHub.
+
+---
+
+# Learning Outcomes
+
+This project demonstrates practical experience in:
+
 - Data Engineering
-- SQL
-- Machine Learning
-- Time Series Forecasting
-- Recommendation Systems
-- Explainable AI
-- FastAPI
-- React
-- Retrieval-Augmented Generation
-- Large Language Models
-- AI Agents
-- Docker
-- AWS
+- SQL & Data Warehousing
+- ETL Pipeline Development
+- REST API Development
+- React Frontend Development
+- FastAPI Backend Development
+- Retrieval-Augmented Generation (RAG)
+- Vector Databases (FAISS)
+- Embedding Models
+- Enterprise Document Management
+- Business Intelligence
+- AI-powered Decision Support
 - Git & GitHub
-- MLOps
 
 ---
 
-# Version History
+# Future Enhancements
 
-| Version | Date | Description |
-|----------|------|-------------|
-| v0.1 | 2026-07-14 | Project initialization completed |
+- AI-generated Business Insights
+- Hybrid Search (Keyword + Vector)
+- Customer Segmentation
+- Demand Forecasting
+- Product Recommendation
+- Cloud Deployment
+- Docker Support
+- CI/CD Pipeline
 
-## Dataset Setup
+---
 
-The project does not store raw datasets in Git.
+# License
 
-To download the dataset:
+This project is intended for educational and portfolio purposes.
 
-1. Configure the Kaggle API.
-2. Run the dataset download script.
-3. Extract the dataset into:
+---
 
-data/raw/global_superstore/
+# Author
 
-The ETL pipeline will generate processed datasets automatically.
+**Harish Thakre**
+
+Bachelor of Engineering (Information Technology)
+
+Enterprise Retail Decision Intelligence Platform
