@@ -34,6 +34,103 @@ const SUGGESTED_QUESTIONS = [
   "Show monthly sales trend",
 ];
 
+const markdownPlugins = [remarkGfm];
+const markdownComponents = {
+  p: ({ children }: any) => (
+    <Typography
+      sx={{
+        mb: 1.5,
+        lineHeight: 1.9,
+      }}
+    >
+      {children}
+    </Typography>
+  ),
+
+  h1: ({ children }: any) => (
+    <Typography
+      variant="h4"
+      fontWeight={700}
+      sx={{ mb: 2 }}
+    >
+      {children}
+    </Typography>
+  ),
+
+  h2: ({ children }: any) => (
+    <Typography
+      variant="h5"
+      fontWeight={700}
+      sx={{ mb: 2 }}
+    >
+      {children}
+    </Typography>
+  ),
+
+  h3: ({ children }: any) => (
+    <Typography
+      variant="h6"
+      fontWeight={700}
+      sx={{ mb: 1.5 }}
+    >
+      {children}
+    </Typography>
+  ),
+
+  ul: ({ children }: any) => (
+    <Box
+      component="ul"
+      sx={{ pl: 3, mb: 2 }}
+    >
+      {children}
+    </Box>
+  ),
+
+  ol: ({ children }: any) => (
+    <Box
+      component="ol"
+      sx={{ pl: 3, mb: 2 }}
+    >
+      {children}
+    </Box>
+  ),
+
+  li: ({ children }: any) => (
+    <Typography
+      component="li"
+      sx={{ mb: 0.5 }}
+    >
+      {children}
+    </Typography>
+  ),
+
+  strong: ({ children }: any) => (
+    <Box
+      component="strong"
+      sx={{
+        fontWeight: 700,
+      }}
+    >
+      {children}
+    </Box>
+  ),
+
+  code: ({ children }: any) => (
+    <Box
+      component="code"
+      sx={{
+        bgcolor: "#f4f4f4",
+        px: 0.5,
+        py: 0.25,
+        borderRadius: 1,
+        fontFamily: "monospace",
+      }}
+    >
+      {children}
+    </Box>
+  ),
+};
+
 export default function AIAssistantPage() {
   const [question, setQuestion] = useState("");
 
@@ -447,105 +544,11 @@ export default function AIAssistantPage() {
           </Typography>
 
           <ReactMarkdown
-  remarkPlugins={[remarkGfm]}
-  components={{
-    p: ({ children }) => (
-      <Typography
-        sx={{
-          mb: 1.5,
-          lineHeight: 1.9,
-        }}
-      >
-        {children}
-      </Typography>
-    ),
-
-    h1: ({ children }) => (
-      <Typography
-        variant="h4"
-        fontWeight={700}
-        sx={{ mb: 2 }}
-      >
-        {children}
-      </Typography>
-    ),
-
-    h2: ({ children }) => (
-      <Typography
-        variant="h5"
-        fontWeight={700}
-        sx={{ mb: 2 }}
-      >
-        {children}
-      </Typography>
-    ),
-
-    h3: ({ children }) => (
-      <Typography
-        variant="h6"
-        fontWeight={700}
-        sx={{ mb: 1.5 }}
-      >
-        {children}
-      </Typography>
-    ),
-
-    ul: ({ children }) => (
-      <Box
-        component="ul"
-        sx={{ pl: 3, mb: 2 }}
-      >
-        {children}
-      </Box>
-    ),
-
-    ol: ({ children }) => (
-      <Box
-        component="ol"
-        sx={{ pl: 3, mb: 2 }}
-      >
-        {children}
-      </Box>
-    ),
-
-    li: ({ children }) => (
-      <Typography
-        component="li"
-        sx={{ mb: 0.5 }}
-      >
-        {children}
-      </Typography>
-    ),
-
-    strong: ({ children }) => (
-      <Box
-        component="strong"
-        sx={{
-          fontWeight: 700,
-        }}
-      >
-        {children}
-      </Box>
-    ),
-
-    code: ({ children }) => (
-      <Box
-        component="code"
-        sx={{
-          bgcolor: "#f4f4f4",
-          px: 0.5,
-          py: 0.25,
-          borderRadius: 1,
-          fontFamily: "monospace",
-        }}
-      >
-        {children}
-      </Box>
-    ),
-  }}
->
-  {message.content}
-</ReactMarkdown>
+            remarkPlugins={markdownPlugins}
+            components={markdownComponents}
+          >
+            {message.content}
+          </ReactMarkdown>
 
           {message.role ===
             "assistant" &&
