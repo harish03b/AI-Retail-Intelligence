@@ -12,7 +12,16 @@ import { Toaster } from "react-hot-toast";
 import App from "./App";
 import theme from "./theme/theme";
 
-const queryClient = new QueryClient();
+// ⚡ Bolt: Added 5 minute staleTime to prevent unnecessary backend queries
+// on component mounts (e.g., tab switches), significantly reducing database load
+// and improving frontend perceived performance.
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
