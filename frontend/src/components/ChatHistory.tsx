@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Box,
   Button,
@@ -30,7 +31,12 @@ interface ChatHistoryProps {
   onClearHistory: () => void;
 }
 
-export default function ChatHistory({
+// ⚡ Bolt: Performance optimization
+// What: Wrapped ChatHistory in React.memo
+// Why: Prevents ChatHistory from unnecessarily re-rendering on every keystroke when the user types in the AIAssistantPage's input field
+// Impact: Eliminates redundant render cycles for the entire conversation history list, keeping typing highly responsive
+// Measurement: Use React DevTools Profiler to verify ChatHistory does not render when typing in the prompt input
+const ChatHistory = React.memo(function ChatHistory({
   conversations,
   activeConversationId,
   onSelectConversation,
@@ -152,4 +158,6 @@ export default function ChatHistory({
       </Stack>
     </Paper>
   );
-}
+});
+
+export default ChatHistory;
