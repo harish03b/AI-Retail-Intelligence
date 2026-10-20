@@ -2,6 +2,6 @@
 **Learning:** Defining custom React components inline within the `components` prop of `ReactMarkdown` inside a list `map` causes React to unmount and remount the entire message DOM on every re-render (e.g., every keystroke in the chat input). This is because the inline arrow functions create new component types on every render pass, which is a severe performance bottleneck in chat interfaces.
 **Action:** Always extract custom components for `ReactMarkdown` outside of the parent component or memoize them using `useMemo`. Similarly, array props like `remarkPlugins={[remarkGfm]}` should be extracted outside the component.
 
-## 2024-05-18 - [Global React Query StaleTime Causes Staleness Bugs]
-**Learning:** Setting a global `staleTime` (e.g. 5 minutes) in React Query to reduce network requests introduces massive data freshness bugs across the app, acting as an unintended architectural change.
-**Action:** Never change global `staleTime` in React Query defaultOptions without explicit instruction. Optimize on a per-query level instead or stick to safe component memoization.
+## 2026-10-16 - React Query Default Stale Time
+**Learning:** By default, React Query refetches data on window focus and component mounts, which can cause unnecessary backend load for data that rarely changes.
+**Action:** Set a global default staleTime in main.tsx or specific queries to reduce redundant network requests, but keep it conservative (e.g. 1 minute) to avoid stale data unless explicitly configured longer for certain endpoints.
