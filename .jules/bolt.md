@@ -5,3 +5,4 @@
 ## 2026-10-16 - React Query Default Stale Time
 **Learning:** By default, React Query refetches data on window focus and component mounts, which can cause unnecessary backend load for data that rarely changes.
 **Action:** Set a global default staleTime in main.tsx or specific queries to reduce redundant network requests, but keep it conservative (e.g. 1 minute) to avoid stale data unless explicitly configured longer for certain endpoints.
+## 2026-10-22 - [React.memo Omissions]\n**Learning:** When using React.memo with a custom comparator for complex message objects, failing to compare all dynamic fields (like 'sources' which might stream in later) can cause UI staleness bugs.\n**Action:** Rely on the default shallow comparison of React.memo unless there is a specific, verified need for a custom equality check.
