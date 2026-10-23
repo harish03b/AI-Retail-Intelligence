@@ -5,3 +5,7 @@
 ## 2026-10-16 - React Query Default Stale Time
 **Learning:** By default, React Query refetches data on window focus and component mounts, which can cause unnecessary backend load for data that rarely changes.
 **Action:** Set a global default staleTime in main.tsx or specific queries to reduce redundant network requests, but keep it conservative (e.g. 1 minute) to avoid stale data unless explicitly configured longer for certain endpoints.
+
+## 2026-10-23 - Memoizing ChatMessage Components
+**Learning:** Rendering complex objects inside of map statements via anonymous inline definitions without memoization inside a React parent object will cause all descendants (including very slow `ReactMarkdown` instances) to constantly unmount and remount when the user modifies any sibling state like a chat input box.
+**Action:** Extract large items into a `React.memo` container.
