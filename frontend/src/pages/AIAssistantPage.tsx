@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import {
   Avatar,
@@ -36,7 +36,7 @@ const SUGGESTED_QUESTIONS = [
 
 const markdownPlugins = [remarkGfm];
 const markdownComponents = {
-  p: ({ children }: any) => (
+  p: ({ children }: { children: React.ReactNode }) => (
     <Typography
       sx={{
         mb: 1.5,
@@ -47,7 +47,7 @@ const markdownComponents = {
     </Typography>
   ),
 
-  h1: ({ children }: any) => (
+  h1: ({ children }: { children: React.ReactNode }) => (
     <Typography
       variant="h4"
       fontWeight={700}
@@ -57,7 +57,7 @@ const markdownComponents = {
     </Typography>
   ),
 
-  h2: ({ children }: any) => (
+  h2: ({ children }: { children: React.ReactNode }) => (
     <Typography
       variant="h5"
       fontWeight={700}
@@ -67,7 +67,7 @@ const markdownComponents = {
     </Typography>
   ),
 
-  h3: ({ children }: any) => (
+  h3: ({ children }: { children: React.ReactNode }) => (
     <Typography
       variant="h6"
       fontWeight={700}
@@ -77,7 +77,7 @@ const markdownComponents = {
     </Typography>
   ),
 
-  ul: ({ children }: any) => (
+  ul: ({ children }: { children: React.ReactNode }) => (
     <Box
       component="ul"
       sx={{ pl: 3, mb: 2 }}
@@ -86,7 +86,7 @@ const markdownComponents = {
     </Box>
   ),
 
-  ol: ({ children }: any) => (
+  ol: ({ children }: { children: React.ReactNode }) => (
     <Box
       component="ol"
       sx={{ pl: 3, mb: 2 }}
@@ -95,7 +95,7 @@ const markdownComponents = {
     </Box>
   ),
 
-  li: ({ children }: any) => (
+  li: ({ children }: { children: React.ReactNode }) => (
     <Typography
       component="li"
       sx={{ mb: 0.5 }}
@@ -104,7 +104,7 @@ const markdownComponents = {
     </Typography>
   ),
 
-  strong: ({ children }: any) => (
+  strong: ({ children }: { children: React.ReactNode }) => (
     <Box
       component="strong"
       sx={{
@@ -115,7 +115,7 @@ const markdownComponents = {
     </Box>
   ),
 
-  code: ({ children }: any) => (
+  code: ({ children }: { children: React.ReactNode }) => (
     <Box
       component="code"
       sx={{
@@ -130,6 +130,137 @@ const markdownComponents = {
     </Box>
   ),
 };
+
+// ⚡ Bolt: Performance optimization
+// What: Extracted individual chat messages into a memoized component.
+// Why: Prevents expensive O(N) re-renders of all chat messages (which contain complex ReactMarkdown components) on every single keystroke in the input field.
+// Impact: Reduces typing latency and prevents unmount/remount bottlenecks during state updates in the parent.
+// Measurement: Verify by typing rapidly in the input field; React DevTools will show ChatMessageItem not re-rendering.
+const ChatMessageItem = React.memo(({ message }: { message: import('../types/chat').ChatMessage }) => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent:
+          message.role === "user" ? "flex-end" : "flex-start",
+      }}
+    >
+      <Stack
+        direction={message.role === "user" ? "row-reverse" : "row"}
+        spacing={2}
+        alignItems="flex-start"
+        sx={{
+          maxWidth: "82%",
+        }}
+      >
+        <Avatar
+          sx={{
+            width: 42,
+            height: 42,
+            bgcolor: message.role === "assistant" ? "#6C63FF" : "#1976D2",
+            boxShadow: "0 8px 18px rgba(0,0,0,.15)",
+          }}
+        >
+          {message.role === "assistant" ? (
+            <SmartToyRoundedIcon />
+          ) : (
+            <PersonRoundedIcon />
+          )}
+        </Avatar>
+
+        <Card
+          elevation={0}
+          sx={{
+            borderRadius: 5,
+            p: 2.5,
+            bgcolor: message.role === "assistant" ? "#ffffff" : "#6C63FF",
+            color: message.role === "assistant" ? "text.primary" : "#fff",
+            border: message.role === "assistant" ? "1px solid #ECEBFF" : "none",
+            boxShadow:
+              message.role === "assistant"
+                ? "0 8px 20px rgba(0,0,0,.06)"
+                : "0 12px 24px rgba(108,99,255,.25)",
+          }}
+        >
+          <Typography
+            sx={{
+              fontWeight: 700,
+              mb: 1,
+            }}
+          >
+            {message.role === "assistant" ? "Enterprise AI" : "You"}
+          </Typography>
+
+          <ReactMarkdown
+            remarkPlugins={markdownPlugins}
+            components={markdownComponents}
+          >
+            {message.content}
+          </ReactMarkdown>
+
+          {message.role === "assistant" &&
+            message.sources &&
+            message.sources.length > 0 && (
+              <>
+                <Divider
+                  sx={{
+                    my: 2,
+                  }}
+                />
+
+                <Typography
+                  variant="subtitle2"
+                  sx={{
+                    fontWeight: 700,
+                    mb: 1,
+                  }}
+                >
+                  Sources
+                </Typography>
+
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  useFlexGap
+                  sx={{
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {message.sources.map((source: string) => (
+                    <Chip
+                      key={source}
+                      icon={<DescriptionIcon />}
+                      label={source}
+                      color="primary"
+                      variant="outlined"
+                      clickable
+                      onClick={() =>
+                        window.open(
+                          `${import.meta.env.VITE_API_BASE_URL}/files/${encodeURIComponent(source)}`,
+                          "_blank"
+                        )
+                      }
+                      sx={{
+                        borderRadius: 3,
+                        cursor: "pointer",
+                        transition: "0.2s",
+
+                        "&:hover": {
+                          backgroundColor: "#6C63FF",
+                          color: "#fff",
+                          transform: "translateY(-2px)",
+                        },
+                      }}
+                    />
+                  ))}
+                </Stack>
+              </>
+            )}
+        </Card>
+      </Stack>
+    </Box>
+  );
+});
 
 export default function AIAssistantPage() {
   const [question, setQuestion] = useState("");
@@ -466,157 +597,7 @@ export default function AIAssistantPage() {
 )}
 <Stack spacing={3}>
   {messages.map((message) => (
-    <Box
-      key={message.id}
-      sx={{
-        display: "flex",
-        justifyContent:
-          message.role === "user"
-            ? "flex-end"
-            : "flex-start",
-      }}
-    >
-      <Stack
-        direction={
-          message.role === "user"
-            ? "row-reverse"
-            : "row"
-        }
-        spacing={2}
-        alignItems="flex-start"
-        sx={{
-          maxWidth: "82%",
-        }}
-      >
-        <Avatar
-          sx={{
-            width: 42,
-            height: 42,
-            bgcolor:
-              message.role === "assistant"
-                ? "#6C63FF"
-                : "#1976D2",
-            boxShadow:
-              "0 8px 18px rgba(0,0,0,.15)",
-          }}
-        >
-          {message.role ===
-          "assistant" ? (
-            <SmartToyRoundedIcon />
-          ) : (
-            <PersonRoundedIcon />
-          )}
-        </Avatar>
-
-        <Card
-          elevation={0}
-          sx={{
-            borderRadius: 5,
-            p: 2.5,
-            bgcolor:
-              message.role === "assistant"
-                ? "#ffffff"
-                : "#6C63FF",
-            color:
-              message.role === "assistant"
-                ? "text.primary"
-                : "#fff",
-            border:
-              message.role === "assistant"
-                ? "1px solid #ECEBFF"
-                : "none",
-            boxShadow:
-              message.role === "assistant"
-                ? "0 8px 20px rgba(0,0,0,.06)"
-                : "0 12px 24px rgba(108,99,255,.25)",
-          }}
-        >
-          <Typography
-            sx={{
-              fontWeight: 700,
-              mb: 1,
-            }}
-          >
-            {message.role ===
-            "assistant"
-              ? "Enterprise AI"
-              : "You"}
-          </Typography>
-
-          <ReactMarkdown
-            remarkPlugins={markdownPlugins}
-            components={markdownComponents}
-          >
-            {message.content}
-          </ReactMarkdown>
-
-          {message.role ===
-            "assistant" &&
-            message.sources &&
-            message.sources.length >
-              0 && (
-              <>
-                <Divider
-                  sx={{
-                    my: 2,
-                  }}
-                />
-
-                <Typography
-                  variant="subtitle2"
-                  sx={{
-                    fontWeight: 700,
-                    mb: 1,
-                  }}
-                >
-                  Sources
-                </Typography>
-
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  useFlexGap
-                  sx={{
-                    flexWrap: "wrap",
-                  }}
-                >
-                  {message.sources.map(
-                    (source) => (
-                      <Chip
-  key={source}
-  icon={<DescriptionIcon />}
-  label={source}
-  color="primary"
-  variant="outlined"
-  clickable
-  onClick={() =>
-    window.open(
-      `${import.meta.env.VITE_API_BASE_URL}/files/${encodeURIComponent(
-        source
-      )}`,
-      "_blank"
-    )
-  }
-  sx={{
-    borderRadius: 3,
-    cursor: "pointer",
-    transition: "0.2s",
-
-    "&:hover": {
-      backgroundColor: "#6C63FF",
-      color: "#fff",
-      transform: "translateY(-2px)",
-    },
-  }}
-/>
-                    )
-                  )}
-                </Stack>
-              </>
-            )}
-        </Card>
-      </Stack>
-    </Box>
+    <ChatMessageItem key={message.id} message={message} />
   ))}
 
   {loading && (
