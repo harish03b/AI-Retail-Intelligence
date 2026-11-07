@@ -11,20 +11,9 @@ export default function AppRoutes() {
   return (
     <Routes>
       <Route element={<DashboardLayout />}>
-        <Route
-          path="/"
-          element={<DashboardPage />}
-        />
-
-        <Route
-          path="/assistant"
-          element={<AIAssistantPage />}
-        />
-
-        <Route
-          path="/documents"
-          element={<DocumentsPage />}
-        />
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="/assistant" element={<AIAssistantPage />} />
+        <Route path="/documents" element={<DocumentsPage />} />
       </Route>
     </Routes>
   );
