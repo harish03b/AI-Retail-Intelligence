@@ -394,7 +394,22 @@ function closeSnackbar() {
   {deleting === document.filename
     ? "Deleting..."
     : "Delete"}
-</Button><Dialog
+</Button>
+
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      )}
+
+      {/* ⚡ Bolt: Performance optimization */}
+      {/* What: Extracted Dialog and Snackbar out of the map loop */}
+      {/* Why: Placing unrendered overlay components inside a React list map creates duplicate hidden elements in the DOM, causing DOM bloating and re-renders */}
+      {/* Impact: Reduces DOM node count significantly and avoids unnecessary re-renders when list updates */}
+      {/* Measurement: Verify using React DevTools and DOM element count in browser */}
+      <Dialog
   open={deleteDialogOpen}
   onClose={closeDeleteDialog}
 >
@@ -436,7 +451,7 @@ function closeSnackbar() {
     </Button>
   </DialogActions>
 </Dialog>
-<Snackbar
+      <Snackbar
   open={snackbarOpen}
   autoHideDuration={4000}
   onClose={closeSnackbar}
@@ -454,13 +469,6 @@ function closeSnackbar() {
     {snackbarMessage}
   </Alert>
 </Snackbar>
-                  </Stack>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
     </Box>
   );
 }
