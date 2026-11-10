@@ -385,75 +385,16 @@ function closeSnackbar() {
                     </Button>
 
                     <Button
-  color="error"
-  variant="outlined"
-  startIcon={<DeleteOutlineRoundedIcon />}
-  onClick={() => openDeleteDialog(document)}
-  disabled={deleting === document.filename}
->
-  {deleting === document.filename
-    ? "Deleting..."
-    : "Delete"}
-</Button><Dialog
-  open={deleteDialogOpen}
-  onClose={closeDeleteDialog}
->
-  <DialogTitle>
-    Delete Document
-  </DialogTitle>
-
-  <DialogContent>
-    <DialogContentText>
-      Are you sure you want to delete
-      <strong>
-        {" "}
-        {selectedDocument?.filename}
-      </strong>
-      ?
-      <br />
-      <br />
-      This action cannot be undone and the
-      document will also be removed from the
-      AI knowledge base.
-    </DialogContentText>
-  </DialogContent>
-
-  <DialogActions>
-    <Button
-      onClick={closeDeleteDialog}
-      variant="outlined"
-    >
-      Cancel
-    </Button>
-
-    <Button
-      color="error"
-      variant="contained"
-      onClick={confirmDelete}
-      disabled={deleting !== null}
-    >
-      {deleting ? "Deleting..." : "Delete"}
-    </Button>
-  </DialogActions>
-</Dialog>
-<Snackbar
-  open={snackbarOpen}
-  autoHideDuration={4000}
-  onClose={closeSnackbar}
-  anchorOrigin={{
-    vertical: "bottom",
-    horizontal: "right",
-  }}
->
-  <Alert
-    onClose={closeSnackbar}
-    severity={snackbarSeverity}
-    variant="filled"
-    sx={{ width: "100%" }}
-  >
-    {snackbarMessage}
-  </Alert>
-</Snackbar>
+                      color="error"
+                      variant="outlined"
+                      startIcon={<DeleteOutlineRoundedIcon />}
+                      onClick={() => openDeleteDialog(document)}
+                      disabled={deleting === document.filename}
+                    >
+                      {deleting === document.filename
+                        ? "Deleting..."
+                        : "Delete"}
+                    </Button>
                   </Stack>
                 </CardContent>
               </Card>
@@ -461,6 +402,72 @@ function closeSnackbar() {
           ))}
         </Grid>
       )}
+
+      {/* ⚡ Bolt: Performance optimization
+          What: Moved Dialog and Snackbar outside the .map() loop
+          Why: Placing these overlay components inside the loop creates duplicate hidden DOM elements for every document, increasing DOM size and re-renders.
+          Impact: Prevents DOM bloating and reduces unnecessary re-renders of hidden components.
+          Measurement: Inspect the DOM tree using browser DevTools. Only one Dialog and one Snackbar should exist in the DOM instead of N duplicates. */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={closeDeleteDialog}
+      >
+        <DialogTitle>
+          Delete Document
+        </DialogTitle>
+
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete
+            <strong>
+              {" "}
+              {selectedDocument?.filename}
+            </strong>
+            ?
+            <br />
+            <br />
+            This action cannot be undone and the
+            document will also be removed from the
+            AI knowledge base.
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+          <Button
+            onClick={closeDeleteDialog}
+            variant="outlined"
+          >
+            Cancel
+          </Button>
+
+          <Button
+            color="error"
+            variant="contained"
+            onClick={confirmDelete}
+            disabled={deleting !== null}
+          >
+            {deleting ? "Deleting..." : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={closeSnackbar}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+      >
+        <Alert
+          onClose={closeSnackbar}
+          severity={snackbarSeverity}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
